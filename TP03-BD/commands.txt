@@ -1,0 +1,155 @@
+
+Q1) Alter table Etudiant
+ Add date_naissance date;
+
+Q2)Select nomeetudiant, prenometudiant, 
+extract( day from date_naissance) as  jour,
+extract (month from date_naissance) as mois, 
+extract (year from date_naissance ) as annee 
+From Etudiant ;
+
+Q3)Select avg (extract (year from sysdate)-extract (year from date_naissance)) as 
+“avg_age”
+ from Etudiant ;
+
+Option2:
+
+select avg(sysdate-date_naissance)/365 as ‘avg_age ‘
+from Etudiant ;
+
+Q4)
+Select (count(codeetudiant)) as “nb_etud” ,
+(avg (extract(year from sysdate)-extract(year from date_naissance))) as 
+“avg_Age”
+from Etudiant ;
+
+Q5)SELECT 
+  COUNT(codeetudiant) AS nb_et,
+  AVG(EXTRACT(YEAR FROM SYSDATE) - EXTRACT(YEAR FROM date_naissance)) AS avg_Age,
+  MAX(EXTRACT(YEAR FROM SYSDATE) - EXTRACT(YEAR FROM date_naissance)) AS max_Age,
+  MIN(EXTRACT(YEAR FROM SYSDATE) - EXTRACT(YEAR FROM date_naissance)) AS min_Age
+FROM etudiant;
+
+Q6)select count(codeetudiant), avg (note),min(note),max(note), date_naissance
+from Resultat natural join Etudiant 
+group by date_naissance ;
+
+q7)Select count (distinct codeetudiant),avg (note),min(note),max(note),extract(year from datenaissance)
+ from Resultat natural join Etudiant 
+ where extract(year from datenaissance) in(2001, 2004)
+ group by extract(year from datenaissance);
+
+q8)select count(distinct codeetudiant),avg (note),min(note),max(note),extract(year from datenaissance)
+from Resultat natural join Etudiant
+where ville in ('AGADIR','CASA')
+group by extract(year from datenaissance);
+
+q9)select count(distinct codeetudiant),avg (note),min(note),max(note),extract(year from date_naissance)
+from Resultat natural join Etudiant 
+ where ville in ('MARRAKECH','TAROUDANT') 
+ and  in(1,2)
+ group by extract(year from date_naissance);
+
+q10)select count(distinct codeetudiant),avg (note),min(note),max(note),extract(year from date_naissance)
+from Resultat natural join Etudiant
+group by extract(year from datenaissance) 
+having avg(note) between 12 and 16;
+
+q11)select count(distinct codeetudiant),avg (note),min(note),max(note)
+from Resultat natural join Etudiant
+group by note;
+
+q12)select count(distinct codeetudiant),avg (note),min(note),max(note)
+from Resultat natural join Etudiant
+group by note desc;
+
+q13)Select initcap (nom)
+ from Enseignant 
+ Where nom like '%i';
+
+q14)select nom,count(codecours)
+from Enseignant natural join Charge 
+group by num_ens, nom
+having count(codecours)>=2;
+
+q15)select nom, specialite
+from Enseignant
+where specialite is not null;
+
+q16)
+Select e1.nomensiegnant, e2.specialite
+from Enseignant e1, Enseignant e2
+where e1.specialite = e2.specialite
+and e1.codeensiegnant< e2.codeensiegnant;
+
+17)Select e1. nomensiegnant, e2.nomensiegnant
+from Enseignant e1, Enseignant e2
+where (e1. codeensiegnant, e2.codeensiegnant) in (
+select c1.codeensiegnant, c2.codeensiegnant
+from Charge c1, Charge c2
+where c1.codecours=c2.codecours) ;
+
+18)
+Create table Etudiants (
+codeetudiant number primary key, nom varchar2(20), 
+prenom varchar2(20), enrollment_year number(1),
+genre char constraint plage_genre check( genre in (‘F’,’f’,’M’,’m’)) ,
+ville varchar2(10)) ;
+------------------------
+Union des tables
+select * from Etudiant 
+union
+select* from Etudiants;
+
+19)Select * from Etudiant Where enrollment_year=1
+Union
+Select * from Etudiants Where enrollment_year = 1;
+
+20)Select * from Etudiant Where enrollment_year=1
+Union
+Select * from Etudiants Where enrollment_year =3;
+
+21)Select nom, min(note), max(note), avg(note)
+from Etudiant natural join Resultat 
+group by codeetudiant ,nometudiant ;
+
+22)Select nom,Min(note), Max(note),Avg(note)
+From Etudiant natural join Resultat 
+Where enrollment_year=1
+Group by codeetudiant, nometudiant;
+
+23)Select nom, min(note), max(note), avg(note) 
+from Etudiant natural join Resultat 
+group by codeetudiant, nometudiant
+having avg(note)>11 ;
+
+24)
+Select nom, min(note), max(note), avg(note) 
+from Etudiant natural join Resultat 
+where enrollment_year=2
+group by codeetudiant ,nometudiant
+having avg(note)>12 ;
+
+25)
+Select codeetudiant, nom, avg(note)
+From Etudiant natural join Resultat 
+Group by num_etu, nom ;
+
+26)Select CODEENSEIGNANT, count(CODECOURS) from Charge 
+where CODECOURS not in (select CODECOURS from Cours where 
+INTITULE='RESEAUX')
+group by CODEENSEIGNANT
+having count(CODECOURS) =(select count(CODECOURS) 
+from cours
+where INTITULE<>’RESEAUX’) ;
+
+27)select num_ens from charge c
+where not exists (select num_ens from enseignant where num_ens=c.num_ens );
+
+28) Create view vueEtudiant As
+Select CODEETUDIANT, NOMEETUDIANT, avg(note)
+From Etudiant natural join Resultat 
+Where enrollment_year = 1
+Group by CODEETUDIANT, NOMEETUDIANT;
+
+29)select * from vueEudiant ;
